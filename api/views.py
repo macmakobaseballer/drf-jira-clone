@@ -20,6 +20,10 @@ class LoginUserView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
+    def update(self, request,*args,**kwargs):
+        response = {'message': 'PUT method is not allowed.'}
+        return Response(response, status.HTTP_400_BAD_REQUEST)
+
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -56,7 +60,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = (permissions.IsAuthenticated, custompermissions.OwnerPermission,)
 
-    def create(self, serializer):
+    def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
     def partial_update(self, request, *args, **kwargs):
